@@ -8,6 +8,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,10 +21,16 @@ public class User {
     private ObjectId id;
     @Indexed(unique = true)
     @NonNull
-    private String username;
+    private String userName;
+
+    @Field(name="email_address")
+    private String email;
+
+//    private boolean sentimentAnalysis;
+
     @NonNull
     private String password;
     @DBRef
-    private List<JournalEntry> journalEntries = new ArrayList<>();
+    private List<JournalEntry> journalEntries;
     private List<String> roles;
 }

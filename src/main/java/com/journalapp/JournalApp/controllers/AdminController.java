@@ -17,8 +17,7 @@ public class AdminController {
     UserService userService;
 
     @GetMapping("/all-users")
-    public ResponseEntity<List<User>> getAll()
-    {
+    public ResponseEntity<List<User>> getAll() {
         List<User>  users = userService.getAll();
         if(!users.isEmpty())
         {

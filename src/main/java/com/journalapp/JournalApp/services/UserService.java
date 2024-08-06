@@ -14,6 +14,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -41,17 +42,12 @@ public class UserService {
     public boolean saveEntry(User user)
     {
         try{
-//            user.setPassword(passwordEncoder().encode(user.getPassword()));
-            user.setRoles(List.of("USER"));
             userRepository.save(user);
             return true;
-        }
-        catch(Exception e)
-        {
-            log.error("error occurred for {} :", user.getUsername(), e);
-//            System.out.println(e);
+        }catch(Exception e){
             return false;
-        }
+    }
+
 
     }
 
@@ -72,13 +68,12 @@ public class UserService {
 
     public User findByUserName(String username)
     {
-        return userRepository.findByUsername(username);
+        return userRepository.findByUserName(username);
     }
 
     public void saveAdmin(User user) {
 
-//        user.setPassword(passwordEncoder().encode(user.getPassword()));
-        user.setRoles(List.of("ADMIN", "USER"));
+        user.setRoles(Arrays.asList("Admin", "User"));
         userRepository.save(user);
     }
 }
