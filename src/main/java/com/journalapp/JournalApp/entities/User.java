@@ -1,5 +1,6 @@
 package com.journalapp.JournalApp.entities;
 
+import com.journalapp.JournalApp.entities.JournalEntry;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NonNull;
@@ -15,7 +16,6 @@ import java.util.List;
 
 @Document(collection="users")
 @Data
-@Builder
 public class User {
     @Id
     private ObjectId id;
@@ -26,11 +26,12 @@ public class User {
     @Field(name="email_address")
     private String email;
 
-//    private boolean sentimentAnalysis;
-
     @NonNull
     private String password;
+
     @DBRef
-    private List<JournalEntry> journalEntries;
+    @Field("journalEntries")
+    private List<JournalEntry> journalEntries = new ArrayList<>(); // Ensure initialization
+
     private List<String> roles;
 }

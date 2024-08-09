@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,22 +25,31 @@ public class JournalEntryService {
     @Autowired
     private UserService userService;
 
+    private static final Logger logger = LoggerFactory.getLogger(JournalEntryService.class);
 
-    @Transactional
-    public void saveJournalEntry(JournalEntry journalEntry, String userName)
-    {
-        try{
-            User user =  userService.findByUserName(userName);
+    public void saveJournalEntry(JournalEntry journalEntry, String userName) {
+        try {
+            User user = userService.findByUserName(userName);
             journalEntry.setDate(LocalDateTime.now());
             JournalEntry saved = journalEntryRepository.save(journalEntry);
+            logger.debug("JournalEntry saved: {}", saved);
+
+            // Check if the journalEntries list is null and initialize it if necessary
+            if (user.getJournalEntries() == null) {
+                user.setJournalEntries(new ArrayList<>());
+            }
+
             user.getJournalEntries().add(saved);
             userService.saveUser(user);
-        }catch(Exception e){
-            System.out.println(e);
-            throw new RuntimeException("an error occurred while saving the entry");
+            logger.debug("User updated with new JournalEntry: {}", user);
+        } catch (Exception e) {
+            logger.error("An error occurred while saving the entry", e);
+            throw new RuntimeException("An error occurred while saving the entry", e);
         }
-
     }
+
+
+
 
     public void saveJournalEntry(JournalEntry journalEntry)
     {
@@ -57,24 +67,15 @@ public class JournalEntryService {
         return journalEntryRepository.findById(id);
     }
 
-    @Transactional
-    public boolean deleteById(ObjectId id, String userName)
+    public void deleteById(ObjectId id, String userName)
     {
-        boolean removed = false;
-        try {
-            User user =  userService.findByUserName(userName);
-            removed = user.getJournalEntries().removeIf(x->x.getId().equals(id));
-            if(removed)
-            {
-                userService.saveUser(user);
-                journalEntryRepository.deleteById(id);
-                return removed;
-            }
+        User user =  userService.findByUserName(userName);
+        boolean removed = user.getJournalEntries().removeIf(x -> x.getId().equals(id));
+        if(removed)
+        {
+            userService.saveUser(user);
+            journalEntryRepository.deleteById(id);
         }
-        catch(Exception e){
-            System.out.println(e);
-            throw new RuntimeException("an error occured while deleting the id", e);
-        }
-         return removed;
+
     }
 }
