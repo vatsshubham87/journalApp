@@ -3,20 +3,18 @@ package com.journalapp.JournalApp.services;
 import com.journalapp.JournalApp.entities.JournalEntry;
 import com.journalapp.JournalApp.entities.User;
 import com.journalapp.JournalApp.repositories.JournalEntryRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@Slf4j
 public class JournalEntryService {
 
     @Autowired
@@ -25,14 +23,12 @@ public class JournalEntryService {
     @Autowired
     private UserService userService;
 
-    private static final Logger logger = LoggerFactory.getLogger(JournalEntryService.class);
-
     public void saveJournalEntry(JournalEntry journalEntry, String userName) {
         try {
             User user = userService.findByUserName(userName);
             journalEntry.setDate(LocalDateTime.now());
             JournalEntry saved = journalEntryRepository.save(journalEntry);
-            logger.debug("JournalEntry saved: {}", saved);
+            log.debug("JournalEntry saved: {}", saved);
 
             // Check if the journalEntries list is null and initialize it if necessary
             if (user.getJournalEntries() == null) {
@@ -41,9 +37,9 @@ public class JournalEntryService {
 
             user.getJournalEntries().add(saved);
             userService.saveUser(user);
-            logger.debug("User updated with new JournalEntry: {}", user);
+            log.debug("User updated with new JournalEntry: {}", user);
         } catch (Exception e) {
-            logger.error("An error occurred while saving the entry", e);
+            log.error("An error occurred while saving the entry", e);
             throw new RuntimeException("An error occurred while saving the entry", e);
         }
     }

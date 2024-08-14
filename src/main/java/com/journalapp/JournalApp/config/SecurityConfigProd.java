@@ -16,8 +16,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 @EnableMethodSecurity
-@Profile("dev")
-public class SecurityConfig extends WebSecurityConfigurerAdapter {
+@Profile("prod")
+public class SecurityConfigProd extends WebSecurityConfigurerAdapter {
 
 
     @Autowired
@@ -27,9 +27,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                        .antMatchers("/journal/**", "/user/**").authenticated()
-                        .antMatchers("/admin/**").hasRole("ADMIN")
-                        .anyRequest().permitAll()
+                        .anyRequest().authenticated()
                         .and().httpBasic();
         http
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
