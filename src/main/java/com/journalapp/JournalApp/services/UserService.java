@@ -28,7 +28,7 @@ public class UserService {
 
     public boolean saveEntry(User user) {
         try{
-          user.setPassword(passwordEncoder.encode(user.getPassword()));
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
             user.setRoles(Arrays.asList("User"));
             userRepository.save(user);
             return true;
@@ -59,7 +59,6 @@ public class UserService {
     }
 
     public void saveAdmin(User user) {
-
         user.setRoles(Arrays.asList("Admin", "User"));
         userRepository.save(user);
     }
